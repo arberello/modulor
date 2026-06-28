@@ -29,7 +29,11 @@ export async function saveOnboarding(
   const displayName = String(formData.get("display_name") ?? "").trim();
   const sex = String(formData.get("sex") ?? "");
   const birthDate = String(formData.get("birth_date") ?? "");
-  const heightCm = Number(formData.get("height_cm"));
+  const heightCm = Number(
+    String(formData.get("height_cm") ?? "")
+      .trim()
+      .replace(",", ".")
+  );
   const activity = String(formData.get("activity_level") ?? "");
   const goal = String(formData.get("goal") ?? "");
 

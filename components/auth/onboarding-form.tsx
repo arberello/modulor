@@ -75,12 +75,12 @@ export function OnboardingForm({ defaultName }: { defaultName: string }) {
         ]}
       />
 
-      <div className="grid grid-cols-2 gap-fib3">
-        <div className="flex flex-col gap-fib1">
+      <div className="grid grid-cols-1 gap-fib3 sm:grid-cols-2">
+        <div className="flex min-w-0 flex-col gap-fib1">
           <Label htmlFor="birth_date">Data di nascita</Label>
           <Input id="birth_date" name="birth_date" type="date" required />
         </div>
-        <div className="flex flex-col gap-fib1">
+        <div className="flex min-w-0 flex-col gap-fib1">
           <Label htmlFor="height_cm">Altezza (cm)</Label>
           <Input
             id="height_cm"

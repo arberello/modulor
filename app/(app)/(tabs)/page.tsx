@@ -62,18 +62,17 @@ export default async function PesoPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("display_name, sex, birth_date, height_cm, goal, activity_level")
-    .eq("id", user!.id)
-    .single();
-
-  const { data: rows } = await supabase
-    .from("body_measurements")
-    .select(
-      "id, measured_at, weight_kg, body_fat_pct, muscle_mass_kg, source"
-    )
-    .order("measured_at", { ascending: true });
+  const [{ data: profile }, { data: rows }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("display_name, sex, birth_date, height_cm, goal, activity_level")
+      .eq("id", user!.id)
+      .single(),
+    supabase
+      .from("body_measurements")
+      .select("id, measured_at, weight_kg, body_fat_pct, muscle_mass_kg, source")
+      .order("measured_at", { ascending: true }),
+  ]);
 
   const measurements = rows ?? [];
   const latest = measurements.at(-1);
