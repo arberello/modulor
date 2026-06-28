@@ -1,26 +1,175 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+/* ============================================================
+   Modulor — design tokens (Polychromie Architecturale)
+   Un solo rosso protagonista (--rouge). Tutto il resto quieto.
+   ============================================================ */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* Palette grezza */
+  --beton: #e7e4dc; /* background, calcestruzzo chiaro caldo */
+  --surface: #f3f1eb; /* card / superfici rialzate */
+  --encre: #1c1b18; /* testo / icone */
+  --encre-2: #6b6862; /* testo secondario */
+  --ligne: #c9c3b4; /* bordi hairline */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --rouge: #b23a1e; /* ACCENTO primario */
+  --bleu: #2e4057; /* secondario / seconda serie dati */
+  --ocre: #c68a30; /* terza serie / warning soft */
+  --vert: #5f6e4a; /* on-target / success */
+
+  --radius: 3px; /* raggio piccolo e costante (2–4px) */
+
+  /* Token semantici (consumati da shadcn/ui) → mappati su Modulor */
+  --background: var(--beton);
+  --foreground: var(--encre);
+  --card: var(--surface);
+  --card-foreground: var(--encre);
+  --popover: var(--surface);
+  --popover-foreground: var(--encre);
+  --primary: var(--rouge);
+  --primary-foreground: #f3f1eb;
+  --secondary: var(--bleu);
+  --secondary-foreground: #f3f1eb;
+  --muted: #ddd9cf;
+  --muted-foreground: var(--encre-2);
+  --accent: #ddd9cf;
+  --accent-foreground: var(--encre);
+  --destructive: var(--rouge);
+  --destructive-foreground: #f3f1eb;
+  --border: var(--ligne);
+  --input: var(--ligne);
+  --ring: var(--rouge);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --beton: #16150f;
+    --surface: #211f18;
+    --encre: #e7e4dc;
+    --encre-2: #9a968c;
+    --ligne: #34322a;
+
+    --rouge: #cf4a2c;
+    --bleu: #5c7fa6;
+    --ocre: #d6a24a;
+    --vert: #7e9163;
+
+    --background: var(--beton);
+    --foreground: var(--encre);
+    --card: var(--surface);
+    --card-foreground: var(--encre);
+    --popover: var(--surface);
+    --popover-foreground: var(--encre);
+    --primary: var(--rouge);
+    --primary-foreground: #16150f;
+    --secondary: var(--bleu);
+    --secondary-foreground: #e7e4dc;
+    --muted: #2a2820;
+    --muted-foreground: var(--encre-2);
+    --accent: #2a2820;
+    --accent-foreground: var(--encre);
+    --destructive: var(--rouge);
+    --destructive-foreground: #16150f;
+    --border: var(--ligne);
+    --input: var(--ligne);
+    --ring: var(--rouge);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  /* Colori Modulor → utilities (bg-rouge, text-bleu, ...) */
+  --color-beton: var(--beton);
+  --color-surface: var(--surface);
+  --color-encre: var(--encre);
+  --color-encre-2: var(--encre-2);
+  --color-ligne: var(--ligne);
+  --color-rouge: var(--rouge);
+  --color-bleu: var(--bleu);
+  --color-ocre: var(--ocre);
+  --color-vert: var(--vert);
+
+  /* Token semantici shadcn */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Tipografia */
+  --font-sans: var(--font-inter); /* body / UI */
+  --font-display: var(--font-jost); /* heading geometrico (lineage Futura) */
+  --font-mono: var(--font-plex-mono); /* FIRMA: ogni metrica in mono */
+
+  /* Type scale modulare */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  --text-3xl: 2.75rem;
+  --text-4xl: 3.75rem;
+
+  /* Raggio */
+  --radius-sm: calc(var(--radius) - 1px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+
+  /* Spaziatura — la firma Modulor (serie di Fibonacci) */
+  --spacing-fib1: 4px;
+  --spacing-fib2: 8px;
+  --spacing-fib3: 13px;
+  --spacing-fib4: 21px;
+  --spacing-fib5: 34px;
+  --spacing-fib6: 55px;
+  --spacing-fib7: 89px;
+  --spacing-fib8: 144px;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    /* evita bounce/overscroll bianco su iOS PWA */
+    overscroll-behavior-y: none;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  /* Le metriche non sono mai in Inter */
+  .metric {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

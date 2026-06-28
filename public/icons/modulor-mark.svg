@@ -1,0 +1,11 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="#e7e4dc"/>
+  <clipPath id="bar"><rect x="197" y="72" width="118" height="368" rx="8"/></clipPath>
+  <g clip-path="url(#bar)">
+    <rect x="197" y="275.4" width="118" height="164.6" fill="#b23a1e"/>
+    <rect x="197" y="173.7" width="118" height="101.7" fill="#2e4057"/>
+    <rect x="197" y="110.9" width="118" height="62.8"  fill="#b23a1e"/>
+    <rect x="197" y="72"    width="118" height="38.9"  fill="#2e4057"/>
+  </g>
+  <circle cx="256" cy="213" r="30" fill="#e7e4dc" stroke="#1c1b18" stroke-width="7"/>
+</svg>

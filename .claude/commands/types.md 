@@ -1,0 +1,5 @@
+---
+description: Rigenera i TypeScript types dal DB Supabase.
+allowed-tools: mcp__supabase__generate_typescript_types, Write
+---
+Rigenera i TypeScript types dallo schema Supabase con `generate_typescript_types` e salvali in `lib/db/types.ts`, sovrascrivendo il file esistente. Conferma il path e il numero di tabelle tipizzate.

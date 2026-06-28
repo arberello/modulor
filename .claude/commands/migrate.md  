@@ -1,0 +1,14 @@
+---
+description: Crea e applica una migration Supabase, poi rigenera i TypeScript types.
+argument-hint: <descrizione della modifica schema>
+allowed-tools: mcp__supabase__apply_migration, mcp__supabase__execute_sql, mcp__supabase__generate_typescript_types, mcp__supabase__list_tables, Read, Write, Edit
+---
+Crea una migration per: **$ARGUMENTS**
+
+Passi:
+1. Controlla lo schema attuale con `list_tables`.
+2. Scrivi la migration SQL (idempotente dove sensato). Per ogni nuova tabella user-scoped: abilita RLS e aggiungi le policy `auth.uid() = user_id` con `with check`.
+3. Applicala con `apply_migration` (nome descrittivo, snake_case).
+4. Salva il file anche in `supabase/migrations/`.
+5. Rigenera i types con `generate_typescript_types` → `lib/db/types.ts`.
+6. Riepiloga cosa hai cambiato.
