@@ -6,6 +6,31 @@ import { CopyField } from "@/components/sync/copy-field";
 
 export const metadata: Metadata = { title: "Sincronizza bilancia" };
 
+// Righe del Dizionario da costruire nell'app Comandi. La chiave (key) va copiata
+// esatta; il valore è una variabile del campione di Salute, salvo `token`.
+const dictRows: { label: string; key: string; hint: string }[] = [
+  {
+    label: "Autenticazione",
+    key: "token",
+    hint: "Valore = il tuo token (lo trovi qui sopra). È testo fisso, non una variabile.",
+  },
+  {
+    label: "Il peso",
+    key: "weight_kg",
+    hint: "Valore = la variabile del campione Peso corporeo; toccala e scegli «Valore» per avere solo il numero.",
+  },
+  {
+    label: "Grasso % — facoltativo",
+    key: "body_fat_pct",
+    hint: "Valore = la variabile del campione massa grassa, «Valore». Salta la riga se non lo misuri.",
+  },
+  {
+    label: "Data e ora — facoltativo",
+    key: "measured_at",
+    hint: "Valore = la variabile «Data di inizio» del campione Peso. Senza, vale l'ora di adesso.",
+  },
+];
+
 export default async function SyncPage() {
   const supabase = await createClient();
   const {
@@ -20,11 +45,6 @@ export default async function SyncPage() {
 
   const endpoint = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/ingest-health`;
   const token = profile?.sync_token ?? "";
-  const samplePayload = `{
-  "weight_kg": 80.4,
-  "body_fat_pct": 18.2,
-  "measured_at": "2026-06-28T07:30:00Z"
-}`;
 
   return (
     <div className="flex flex-col gap-fib4 p-fib4">
@@ -40,78 +60,146 @@ export default async function SyncPage() {
           Sincronizza la bilancia
         </h1>
         <p className="text-sm text-encre-2">
-          Xiaomi S400 → Mi Home → Apple Salute → Comando iOS → Modulor. Una volta
-          configurato, ogni pesata arriva qui da sola.
+          Una volta configurato, ogni pesata arriva qui da sola: Xiaomi S400 → Mi
+          Home → Apple Salute → Comando iOS → Modulor.
         </p>
       </div>
 
-      {/* Credenziali */}
+      {/* I due valori da incollare */}
       <section className="flex flex-col gap-fib3 rounded-md border border-ligne bg-surface p-fib3">
+        <h2 className="font-display text-base font-medium">I tuoi due valori</h2>
         <CopyField label="Endpoint (URL)" value={endpoint} />
-        <CopyField label="Il tuo token (x-sync-token)" value={token} />
+        <CopyField label="Token" value={token} />
         <p className="text-xs text-encre-2">
-          Il token è personale e segreto: scrive solo sulle tue misurazioni. Non
-          condividerlo.
+          Ti servono solo questi due. Il token è personale e segreto: scrive solo
+          sulle tue misurazioni, non condividerlo.
         </p>
       </section>
 
-      {/* Prerequisito */}
+      {/* 1 · Prerequisito */}
       <section className="flex flex-col gap-fib2">
         <h2 className="font-display text-base font-medium">
           1 · Prerequisito (una volta)
         </h2>
         <p className="text-sm text-encre-2">
           iPhone → Impostazioni → Salute → Accesso ai dati e dispositivi → Mi
-          Home → abilita peso, % grasso, altezza, BMI. Solo l&apos;account
+          Home → abilita Peso e Percentuale massa grassa. Solo l&apos;account
           principale Xiaomi sincronizza su Salute.
         </p>
       </section>
 
-      {/* Comando */}
-      <section className="flex flex-col gap-fib2">
+      {/* 2 · Costruisci il comando */}
+      <section className="flex flex-col gap-fib3">
         <h2 className="font-display text-base font-medium">
-          2 · Comando iOS (app Comandi)
+          2 · Costruisci il comando
         </h2>
-        <ol className="flex list-decimal flex-col gap-fib2 pl-fib4 text-sm text-encre-2">
-          <li>
-            Azione «Trova campioni di salute»: tipo <em>Peso corporeo</em>,
-            ordina per data, limite 1. (Aggiungine un&apos;altra per la massa
-            grassa se vuoi.)
-          </li>
-          <li>
-            Azione «Ottieni contenuto di URL» con i parametri qui sotto.
-          </li>
-          <li>
-            Imposta come <em>Automazione</em> personale: «Quando aggiungo un dato
-            di Salute → Peso», così parte da sola dopo la pesata.
-          </li>
-        </ol>
+        <p className="text-sm text-encre-2">
+          App Comandi → <span className="font-mono">+</span> → aggiungi queste
+          azioni in ordine (cercale dalla barra in basso).
+        </p>
+
+        {/* Azione 1 */}
+        <div className="flex flex-col gap-fib1 rounded-md border border-ligne bg-surface p-fib3">
+          <span className="text-xs uppercase tracking-wide text-encre-2">
+            Azione 1
+          </span>
+          <p className="text-sm font-medium">Trova campioni di salute</p>
+          <p className="text-sm text-encre-2">
+            Tipo <em>Peso corporeo</em> · Ordina per <em>Data di fine</em>{" "}
+            (decrescente) · Limite <em>1</em>.
+          </p>
+        </div>
+
+        {/* Azione 2 (facoltativa) */}
+        <div className="flex flex-col gap-fib1 rounded-md border border-ligne bg-surface p-fib3">
+          <span className="text-xs uppercase tracking-wide text-encre-2">
+            Azione 2 · facoltativa
+          </span>
+          <p className="text-sm font-medium">Trova campioni di salute</p>
+          <p className="text-sm text-encre-2">
+            Tipo <em>Percentuale massa grassa</em> · Limite <em>1</em>. Salta
+            questa se non ti interessa il grasso corporeo.
+          </p>
+        </div>
+
+        {/* Azione 3 · Dizionario */}
+        <div className="flex flex-col gap-fib3 rounded-md border border-ligne bg-surface p-fib3">
+          <div className="flex flex-col gap-fib1">
+            <span className="text-xs uppercase tracking-wide text-encre-2">
+              Azione 3
+            </span>
+            <p className="text-sm font-medium">Dizionario</p>
+            <p className="text-sm text-encre-2">
+              Aggiungi queste righe. Copia le chiavi <em>esatte</em>; nel valore
+              metti quanto indicato.
+            </p>
+          </div>
+          <div className="flex flex-col gap-fib3">
+            {dictRows.map((row) => (
+              <div key={row.key} className="flex flex-col gap-fib1">
+                <CopyField label={row.label} value={row.key} />
+                <p className="text-xs text-encre-2">{row.hint}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Azione 4 · Ottieni contenuto di URL */}
+        <div className="flex flex-col gap-fib3 rounded-md border border-ligne bg-surface p-fib3">
+          <div className="flex flex-col gap-fib1">
+            <span className="text-xs uppercase tracking-wide text-encre-2">
+              Azione 4
+            </span>
+            <p className="text-sm font-medium">Ottieni contenuto di URL</p>
+            <p className="text-sm text-encre-2">
+              Tocca <em>Mostra altro</em> e imposta:
+            </p>
+          </div>
+          <CopyField label="URL" value={endpoint} />
+          <div className="flex flex-col gap-fib1">
+            <span className="text-xs uppercase tracking-wide text-encre-2">
+              Metodo
+            </span>
+            <span className="font-mono text-sm">POST</span>
+          </div>
+          <div className="flex flex-col gap-fib1">
+            <span className="text-xs uppercase tracking-wide text-encre-2">
+              Corpo richiesta
+            </span>
+            <span className="text-sm text-encre-2">
+              Scegli <em>JSON</em>, poi seleziona il <em>Dizionario</em>{" "}
+              dell&apos;azione 3.
+            </span>
+          </div>
+          <p className="text-xs text-encre-2">
+            Le intestazioni le mette Comandi da sé: non aggiungere header.
+          </p>
+        </div>
       </section>
 
-      {/* Parametri richiesta */}
-      <section className="flex flex-col gap-fib3 rounded-md border border-ligne bg-surface p-fib3">
+      {/* 3 · Automazione */}
+      <section className="flex flex-col gap-fib2">
         <h2 className="font-display text-base font-medium">
-          3 · Parametri «Ottieni contenuto di URL»
+          3 · Rendilo automatico (facoltativo)
         </h2>
-        <CopyField label="URL" value={endpoint} />
-        <div className="flex flex-col gap-fib1 text-sm">
-          <span className="text-xs uppercase tracking-wide text-encre-2">
-            Metodo
-          </span>
-          <span className="font-mono">POST</span>
-        </div>
-        <div className="flex flex-col gap-fib1 text-sm">
-          <span className="text-xs uppercase tracking-wide text-encre-2">
-            Intestazioni
-          </span>
-          <span className="font-mono">Content-Type: application/json</span>
-          <span className="font-mono break-all">x-sync-token: {token}</span>
-        </div>
-        <CopyField label="Corpo richiesta (JSON)" value={samplePayload} multiline />
-        <p className="text-xs text-encre-2">
-          Sostituisci i valori con i campi del campione di Salute. `measured_at`
-          in formato ISO è la data/ora della pesata: misurazioni con la stessa
-          data/ora vengono aggiornate, non duplicate.
+        <p className="text-sm text-encre-2">
+          Scheda <em>Automazione</em> → <span className="font-mono">+</span> →{" "}
+          <em>Quando aggiungo un dato di Salute</em> → Peso → esegui questo
+          comando, «Esegui immediatamente» senza chiedere. Così parte da sola
+          dopo ogni pesata.
+        </p>
+      </section>
+
+      {/* Per il secondo account */}
+      <section className="flex flex-col gap-fib2 rounded-md border border-ligne bg-surface p-fib3">
+        <h2 className="font-display text-base font-medium">
+          Per il secondo account
+        </h2>
+        <p className="text-sm text-encre-2">
+          Non rifarlo da capo: quando funziona, apri il comando → Condividi →
+          Copia link iCloud e invialo all&apos;altro telefono. All&apos;import
+          basta cambiare il valore della riga{" "}
+          <span className="font-mono">token</span> con il proprio.
         </p>
       </section>
     </div>
