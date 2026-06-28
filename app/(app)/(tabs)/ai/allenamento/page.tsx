@@ -38,7 +38,15 @@ export default async function AiTrainingPage() {
         </h1>
         <p className="text-sm text-encre-2">
           Dimmi come vuoi allenarti. Combino queste preferenze con il tuo
-          profilo e le ultime sessioni per generare il prompt.
+          profilo e le ultime sessioni per generare il prompt. Claude risponderà
+          con un JSON che poi importi in{" "}
+          <Link
+            href="/allenamento/importa"
+            className="font-medium text-encre underline underline-offset-2"
+          >
+            Allenamento → Importa piano
+          </Link>
+          .
         </p>
       </div>
 

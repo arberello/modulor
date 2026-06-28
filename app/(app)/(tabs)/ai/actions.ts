@@ -43,6 +43,7 @@ import {
   COOKING_TIME_LABELS,
   BUDGET_LABELS,
 } from "@/lib/ai-plan";
+import { TRAINING_PLAN_SCHEMA_DOC } from "@/lib/training-plan";
 
 export type PromptState = { prompt?: string; error?: string };
 
@@ -326,27 +327,11 @@ export async function generateTrainingPrompt(
   L.push("");
 
   L.push(
-    "# OUTPUT RICHIESTO (rispetta ESATTAMENTE questa struttura)",
-    "Rispondi in italiano, con tabelle Markdown e numeri sempre espliciti.",
+    "# OUTPUT RICHIESTO",
+    "Progetta un mesociclo coerente con i dati e i vincoli sopra (rispetta giorni/settimana, durata, attrezzatura e limitazioni; usa lo storico per tarare i carichi).",
+    "L'output verrà IMPORTATO automaticamente da un'app: deve essere SOLO il JSON, senza testo prima o dopo.",
     "",
-    "## 1. Sintesi del piano",
-    "Razionale in 3-4 righe: split scelto e perché, volume settimanale per gruppo muscolare, come il piano serve l'obiettivo.",
-    "",
-    "## 2. Programmazione settimanale",
-    "Per OGNI giorno di allenamento usa questo formato:",
-    "### Giorno N — <focus> · durata stimata ~X min",
-    "| Esercizio | Serie | Reps | Carico / Intensità | Recupero | Note tecniche |",
-    "|---|---|---|---|---|---|",
-    "Aggiungi una riga di riscaldamento e una di defaticamento per ogni giorno. Indica esplicitamente i giorni di riposo.",
-    "",
-    "## 3. Progressione (mesociclo di 4 settimane)",
-    "Tabella settimana 1→4: come variare carico, volume e intensità (sovraccarico progressivo + settimana di scarico).",
-    "",
-    "## 4. Note, mobilità e sicurezza",
-    "Accorgimenti tecnici, riscaldamento articolare, alternative se manca attrezzatura, gestione delle limitazioni dichiarate.",
-    "",
-    "## 5. Dati mancanti",
-    'Elenca i dati che ti servirebbero per affinare il piano. Se non manca nulla, scrivi "nessuno".'
+    TRAINING_PLAN_SCHEMA_DOC
   );
 
   return { prompt: L.join("\n") };

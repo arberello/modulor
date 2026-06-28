@@ -235,6 +235,98 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_exercises: {
+        Row: {
+          exercise_id: string
+          id: string
+          notes: string | null
+          order_index: number
+          plan_workout_id: string
+          reps: string | null
+          rest_s: number | null
+          rpe: number | null
+          sets: number | null
+          target_weight_kg: number | null
+        }
+        Insert: {
+          exercise_id: string
+          id?: string
+          notes?: string | null
+          order_index?: number
+          plan_workout_id: string
+          reps?: string | null
+          rest_s?: number | null
+          rpe?: number | null
+          sets?: number | null
+          target_weight_kg?: number | null
+        }
+        Update: {
+          exercise_id?: string
+          id?: string
+          notes?: string | null
+          order_index?: number
+          plan_workout_id?: string
+          reps?: string | null
+          rest_s?: number | null
+          rpe?: number | null
+          sets?: number | null
+          target_weight_kg?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_exercises_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_exercises_plan_workout_id_fkey"
+            columns: ["plan_workout_id"]
+            isOneToOne: false
+            referencedRelation: "plan_workouts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plan_workouts: {
+        Row: {
+          day_label: string
+          focus: string | null
+          id: string
+          notes: string | null
+          order_index: number
+          plan_id: string
+          week: number | null
+        }
+        Insert: {
+          day_label: string
+          focus?: string | null
+          id?: string
+          notes?: string | null
+          order_index?: number
+          plan_id: string
+          week?: number | null
+        }
+        Update: {
+          day_label?: string
+          focus?: string | null
+          id?: string
+          notes?: string | null
+          order_index?: number
+          plan_id?: string
+          week?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_workouts_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "training_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           activity_level: string | null
@@ -268,6 +360,48 @@ export type Database = {
           id?: string
           sex?: string | null
           sync_token?: string
+        }
+        Relationships: []
+      }
+      training_plans: {
+        Row: {
+          created_at: string
+          days_per_week: number | null
+          description: string | null
+          goal: string | null
+          id: string
+          name: string
+          progression: string | null
+          raw: Json | null
+          source: string
+          user_id: string
+          weeks: number | null
+        }
+        Insert: {
+          created_at?: string
+          days_per_week?: number | null
+          description?: string | null
+          goal?: string | null
+          id?: string
+          name: string
+          progression?: string | null
+          raw?: Json | null
+          source?: string
+          user_id: string
+          weeks?: number | null
+        }
+        Update: {
+          created_at?: string
+          days_per_week?: number | null
+          description?: string | null
+          goal?: string | null
+          id?: string
+          name?: string
+          progression?: string | null
+          raw?: Json | null
+          source?: string
+          user_id?: string
+          weeks?: number | null
         }
         Relationships: []
       }
