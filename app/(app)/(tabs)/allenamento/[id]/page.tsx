@@ -4,8 +4,11 @@ import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { AddSetDrawer } from "@/components/allenamento/add-set-drawer";
-import { DeleteSetButton } from "@/components/allenamento/delete-set-button";
 import { DeleteSessionButton } from "@/components/allenamento/delete-session-button";
+import {
+  SessionLogger,
+  type LoggerGroup,
+} from "@/components/allenamento/session-logger";
 
 export const metadata: Metadata = { title: "Sessione" };
 
@@ -15,25 +18,6 @@ const dateFmt = new Intl.DateTimeFormat("it-IT", {
   month: "long",
   year: "numeric",
 });
-
-type SetRow = {
-  id: string;
-  set_index: number | null;
-  reps: number | null;
-  weight_kg: number | null;
-  rpe: number | null;
-  rest_s: number | null;
-  exercise_id: string;
-};
-
-function setSummary(s: SetRow): string {
-  const parts: string[] = [];
-  if (s.reps != null) parts.push(`${s.reps} rip`);
-  if (s.weight_kg != null) parts.push(`${s.weight_kg} kg`);
-  if (s.rpe != null) parts.push(`RPE ${s.rpe}`);
-  if (s.rest_s != null) parts.push(`${s.rest_s}s rec`);
-  return parts.join(" · ") || "—";
-}
 
 export default async function SessionPage({
   params,
@@ -52,7 +36,9 @@ export default async function SessionPage({
 
   const { data: sets } = await supabase
     .from("workout_sets")
-    .select("id, set_index, reps, weight_kg, rpe, rest_s, exercise_id, created_at")
+    .select(
+      "id, set_index, reps, weight_kg, rpe, rest_s, exercise_id, completed_at, created_at"
+    )
     .eq("session_id", id)
     .order("created_at", { ascending: true });
 
@@ -63,11 +49,11 @@ export default async function SessionPage({
   const exName = new Map((exRows ?? []).map((e) => [e.id, e.name]));
 
   // Raggruppa per esercizio nell'ordine di prima comparsa.
-  const groups: { exerciseId: string; name: string; sets: SetRow[] }[] = [];
-  const gmap = new Map<string, (typeof groups)[number]>();
+  const groups: LoggerGroup[] = [];
+  const gmap = new Map<string, LoggerGroup>();
   for (const s of sets ?? []) {
     if (!gmap.has(s.exercise_id)) {
-      const g = {
+      const g: LoggerGroup = {
         exerciseId: s.exercise_id,
         name: exName.get(s.exercise_id) ?? "Esercizio",
         sets: [],
@@ -75,7 +61,16 @@ export default async function SessionPage({
       gmap.set(s.exercise_id, g);
       groups.push(g);
     }
-    gmap.get(s.exercise_id)!.sets.push(s as SetRow);
+    gmap.get(s.exercise_id)!.sets.push({
+      id: s.id,
+      exerciseId: s.exercise_id,
+      setIndex: s.set_index,
+      reps: s.reps,
+      weightKg: s.weight_kg,
+      rpe: s.rpe,
+      restS: s.rest_s,
+      completedAt: s.completed_at,
+    });
   }
 
   const { data: library } = await supabase
@@ -104,30 +99,11 @@ export default async function SessionPage({
       <AddSetDrawer sessionId={id} exercises={library ?? []} />
 
       {groups.length > 0 ? (
-        <section className="flex flex-col gap-fib3">
-          {groups.map((g) => (
-            <div key={g.exerciseId} className="flex flex-col gap-fib1">
-              <h2 className="font-display text-base font-medium">{g.name}</h2>
-              <ul className="flex flex-col divide-y divide-ligne overflow-hidden rounded-md border border-ligne bg-surface">
-                {g.sets.map((s) => (
-                  <li
-                    key={s.id}
-                    className="flex items-center justify-between gap-fib3 px-fib3 py-fib2"
-                  >
-                    <span className="metric text-sm">
-                      <span className="text-encre-2">#{s.set_index}</span>{" "}
-                      {setSummary(s)}
-                    </span>
-                    <DeleteSetButton id={s.id} sessionId={id} />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </section>
+        <SessionLogger sessionId={id} groups={groups} />
       ) : (
         <p className="rounded-md border border-dashed border-ligne bg-surface p-fib5 text-center text-sm text-encre-2">
-          Nessun set ancora. Aggiungi il primo qui sopra.
+          Nessun set ancora. Aggiungi il primo qui sopra, oppure avvia la
+          sessione da un piano.
         </p>
       )}
 

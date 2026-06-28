@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ChevronLeft, Play } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { createSessionFromPlanWorkout } from "@/app/(app)/(tabs)/allenamento/actions";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { DeletePlanButton } from "@/components/allenamento/delete-plan-button";
 
 export const metadata: Metadata = { title: "Piano" };
@@ -163,10 +163,14 @@ export default async function PlanPage({
 
               <form action={createSessionFromPlanWorkout}>
                 <input type="hidden" name="plan_workout_id" value={w.id} />
-                <Button type="submit" variant="outline" className="w-full gap-fib1">
-                  <Play className="size-4" aria-hidden />
+                <SubmitButton
+                  variant="outline"
+                  className="w-full gap-fib1"
+                  pendingLabel="Creo la sessione…"
+                  icon={<Play className="size-4" aria-hidden />}
+                >
                   Crea sessione da questo giorno
-                </Button>
+                </SubmitButton>
               </form>
             </div>
           );

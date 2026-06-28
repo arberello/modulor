@@ -4,6 +4,7 @@ import { ChevronRight, Download, Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { createSession } from "./actions";
 import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { ModulorBar } from "@/components/modulor-bar";
 
 export const metadata: Metadata = { title: "Allenamento" };
@@ -48,10 +49,13 @@ export default async function AllenamentoPage() {
 
       <div className="grid grid-cols-2 gap-fib2">
         <form action={createSession}>
-          <Button type="submit" className="w-full gap-fib1">
-            <Plus className="size-4" aria-hidden />
+          <SubmitButton
+            className="w-full gap-fib1"
+            pendingLabel="Creo…"
+            icon={<Plus className="size-4" aria-hidden />}
+          >
             Nuova sessione
-          </Button>
+          </SubmitButton>
         </form>
         <Button asChild variant="outline" className="w-full gap-fib1">
           <Link href="/allenamento/importa">

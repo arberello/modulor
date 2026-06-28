@@ -90,6 +90,43 @@ export async function addSet(
   return { ok: true };
 }
 
+export type LogSetState = { ok?: boolean; error?: string };
+
+/**
+ * Registra il valore reale di un set durante la sessione e ne segna lo stato
+ * "fatto". Non rivalida la route: il logger client riflette già il cambiamento,
+ * così il timer e gli input non vengono resettati a ogni salvataggio.
+ */
+export async function logSet(input: {
+  sessionId: string;
+  setId: string;
+  reps: number | null;
+  weightKg: number | null;
+  rpe: number | null;
+  completed: boolean;
+}): Promise<LogSetState> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Sessione scaduta." };
+
+  if (!input.setId) return { error: "Set mancante." };
+
+  const { error } = await supabase
+    .from("workout_sets")
+    .update({
+      reps: input.reps,
+      weight_kg: input.weightKg,
+      rpe: input.rpe,
+      completed_at: input.completed ? new Date().toISOString() : null,
+    })
+    .eq("id", input.setId);
+  if (error) return { error: "Non è stato possibile salvare il set." };
+
+  return { ok: true };
+}
+
 export async function deleteSet(formData: FormData) {
   const id = String(formData.get("id") ?? "");
   const sessionId = String(formData.get("session_id") ?? "");
