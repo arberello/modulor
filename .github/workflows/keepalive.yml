@@ -15,10 +15,14 @@ jobs:
       - name: Ping /api/health
         run: |
           URL="${{ vars.MODULOR_URL }}"
+          # Togli spazi iniziali/finali (la variabile repo può averne) ed eventuale slash finale.
+          URL="$(echo "$URL" | tr -d '[:space:]')"
+          URL="${URL%/}"
           if [ -z "$URL" ]; then
             echo "Imposta la variabile repo MODULOR_URL (Settings → Secrets and variables → Actions → Variables), es. https://modulor.vercel.app"
             exit 1
           fi
+          echo "Ping: $URL/api/health"
           code=$(curl -s -o /dev/null -w "%{http_code}" "$URL/api/health")
           echo "Health status: $code"
           test "$code" = "200"
