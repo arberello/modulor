@@ -6,9 +6,11 @@ import { CopyField } from "@/components/sync/copy-field";
 
 export const metadata: Metadata = { title: "Sincronizza bilancia" };
 
-// Righe del Dizionario da costruire nell'app Comandi. La chiave (key) va copiata
-// esatta; il valore è una variabile del campione di Salute, salvo `token`.
-const dictRows: { label: string; key: string; hint: string }[] = [
+// Campi del corpo JSON da costruire DENTRO l'azione «Ottieni contenuti dell'URL».
+// La chiave (key) va copiata esatta; il valore è una variabile del campione di
+// Salute, salvo `token`. NB: vanno messi qui, non in un'azione Dizionario a parte
+// (un Dizionario separato non si aggancia al corpo della richiesta).
+const jsonFields: { label: string; key: string; hint: string }[] = [
   {
     label: "Autenticazione",
     key: "token",
@@ -17,17 +19,12 @@ const dictRows: { label: string; key: string; hint: string }[] = [
   {
     label: "Il peso",
     key: "weight_kg",
-    hint: "Valore = la variabile del campione Peso corporeo; toccala e scegli «Valore» per avere solo il numero.",
+    hint: "Valore = tocca il campo, «Seleziona variabile», scegli i Campioni del Peso e poi «Valore».",
   },
   {
     label: "Grasso % — facoltativo",
     key: "body_fat_pct",
-    hint: "Valore = la variabile del campione massa grassa, «Valore». Salta la riga se non lo misuri.",
-  },
-  {
-    label: "Data e ora — facoltativo",
-    key: "measured_at",
-    hint: "Valore = la variabile «Data di inizio» del campione Peso. Senza, vale l'ora di adesso.",
+    hint: "Valore = la variabile dei Campioni della massa grassa, poi «Valore». Salta la riga se non lo misuri.",
   },
 ];
 
@@ -105,8 +102,8 @@ export default async function SyncPage() {
           </span>
           <p className="text-sm font-medium">Trova campioni di salute</p>
           <p className="text-sm text-encre-2">
-            Tipo <em>Peso corporeo</em> · Ordina per <em>Data di fine</em>{" "}
-            (decrescente) · Limite <em>1</em>.
+            Tipo <em>Peso corporeo</em> · Ordina per <em>Data di fine</em>,
+            più recenti prima · Limite <em>1</em>.
           </p>
         </div>
 
@@ -122,37 +119,16 @@ export default async function SyncPage() {
           </p>
         </div>
 
-        {/* Azione 3 · Dizionario */}
+        {/* Azione 3 · Ottieni contenuti dell'URL */}
         <div className="flex flex-col gap-fib3 rounded-md border border-ligne bg-surface p-fib3">
           <div className="flex flex-col gap-fib1">
             <span className="text-xs uppercase tracking-wide text-encre-2">
               Azione 3
             </span>
-            <p className="text-sm font-medium">Dizionario</p>
+            <p className="text-sm font-medium">Ottieni contenuti dell&apos;URL</p>
             <p className="text-sm text-encre-2">
-              Aggiungi queste righe. Copia le chiavi <em>esatte</em>; nel valore
-              metti quanto indicato.
-            </p>
-          </div>
-          <div className="flex flex-col gap-fib3">
-            {dictRows.map((row) => (
-              <div key={row.key} className="flex flex-col gap-fib1">
-                <CopyField label={row.label} value={row.key} />
-                <p className="text-xs text-encre-2">{row.hint}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Azione 4 · Ottieni contenuto di URL */}
-        <div className="flex flex-col gap-fib3 rounded-md border border-ligne bg-surface p-fib3">
-          <div className="flex flex-col gap-fib1">
-            <span className="text-xs uppercase tracking-wide text-encre-2">
-              Azione 4
-            </span>
-            <p className="text-sm font-medium">Ottieni contenuto di URL</p>
-            <p className="text-sm text-encre-2">
-              Tocca <em>Mostra altro</em> e imposta:
+              Incolla l&apos;<em>URL</em> qui sopra, poi tocca{" "}
+              <em>Mostra altro</em> e imposta Metodo e Corpo.
             </p>
           </div>
           <CopyField label="URL" value={endpoint} />
@@ -164,15 +140,25 @@ export default async function SyncPage() {
           </div>
           <div className="flex flex-col gap-fib1">
             <span className="text-xs uppercase tracking-wide text-encre-2">
-              Corpo richiesta
+              Corpo della richiesta
             </span>
             <span className="text-sm text-encre-2">
-              Scegli <em>JSON</em>, poi seleziona il <em>Dizionario</em>{" "}
-              dell&apos;azione 3.
+              Scegli <em>JSON</em>, poi con <em>Aggiungi nuovo campo</em> crea
+              queste righe (tipo <em>Testo</em>):
             </span>
           </div>
-          <p className="text-xs text-encre-2">
-            Le intestazioni le mette Comandi da sé: non aggiungere header.
+          <div className="flex flex-col gap-fib3">
+            {jsonFields.map((row) => (
+              <div key={row.key} className="flex flex-col gap-fib1">
+                <CopyField label={row.label} value={row.key} />
+                <p className="text-xs text-encre-2">{row.hint}</p>
+              </div>
+            ))}
+          </div>
+          <p className="rounded-md border border-rouge/40 bg-rouge/5 p-fib2 text-xs text-encre-2">
+            Importante: i campi vanno <em>dentro</em> questa azione. Non usare
+            un&apos;azione «Dizionario» separata — non si aggancia al corpo e la
+            richiesta parte vuota. Le intestazioni le mette Comandi da sé.
           </p>
         </div>
       </section>
@@ -198,7 +184,7 @@ export default async function SyncPage() {
         <p className="text-sm text-encre-2">
           Non rifarlo da capo: quando funziona, apri il comando → Condividi →
           Copia link iCloud e invialo all&apos;altro telefono. All&apos;import
-          basta cambiare il valore della riga{" "}
+          basta cambiare il valore del campo{" "}
           <span className="font-mono">token</span> con il proprio.
         </p>
       </section>
