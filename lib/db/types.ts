@@ -169,6 +169,45 @@ export type Database = {
         }
         Relationships: []
       }
+      nutrition_preferences: {
+        Row: {
+          allergies: string[]
+          budget: string | null
+          cooking_time: string | null
+          diet: string | null
+          dislikes: string | null
+          meals_per_day: number | null
+          notes: string | null
+          preferences: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          allergies?: string[]
+          budget?: string | null
+          cooking_time?: string | null
+          diet?: string | null
+          dislikes?: string | null
+          meals_per_day?: number | null
+          notes?: string | null
+          preferences?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          allergies?: string[]
+          budget?: string | null
+          cooking_time?: string | null
+          diet?: string | null
+          dislikes?: string | null
+          meals_per_day?: number | null
+          notes?: string | null
+          preferences?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       nutrition_targets: {
         Row: {
           carbs_g: number | null
@@ -229,6 +268,51 @@ export type Database = {
           id?: string
           sex?: string | null
           sync_token?: string
+        }
+        Relationships: []
+      }
+      training_preferences: {
+        Row: {
+          days_per_week: number | null
+          equipment: string[]
+          experience: string | null
+          focus_muscles: string[]
+          intensity: string | null
+          limitations: string | null
+          notes: string | null
+          session_minutes: number | null
+          training_goal: string | null
+          training_style: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          days_per_week?: number | null
+          equipment?: string[]
+          experience?: string | null
+          focus_muscles?: string[]
+          intensity?: string | null
+          limitations?: string | null
+          notes?: string | null
+          session_minutes?: number | null
+          training_goal?: string | null
+          training_style?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          days_per_week?: number | null
+          equipment?: string[]
+          experience?: string | null
+          focus_muscles?: string[]
+          intensity?: string | null
+          limitations?: string | null
+          notes?: string | null
+          session_minutes?: number | null
+          training_goal?: string | null
+          training_style?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
